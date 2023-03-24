@@ -45,7 +45,7 @@
 	<script type="text/javascript">
 	
 		//=============    검색 / page 두가지 경우 모두  Event  처리 =============	
-		function fncGetUserList(currentPage) {
+		function fncGetList(currentPage) {
 			$("#currentPage").val(currentPage)
 			$("form").attr("method" , "POST").attr("action" , "/user/listUser").submit();
 		}
@@ -53,10 +53,22 @@
 		
 		//============= "검색"  Event  처리 =============	
 		 $(function() {
-			 //==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-			 //$( "button.btn.btn-default" ).on("click" , function() {
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			//$( "button.btn.btn-default" ).on("click" , function() {
 			//	fncGetUserList(1);
 			//});
+			$("#search").on("click" , function() {
+				//Debug..
+				//alert(  $( "td.ct_btn01:contains('검색')" ).html() );
+				fncGetList(${ search.currentPage })
+		 	});
+			
+			$("#searchKeyword").on("keydown", function(e) {
+				if (e.keyCode == 13) {
+					e.preventDefault();
+					fncGetList(${ search.currentPage })
+				};				
+			});			
 		 });
 		
 		
@@ -158,7 +170,7 @@
 				    			 value="${! empty search.searchKeyword ? search.searchKeyword : '' }"  >
 				  </div>
 				  
-				  <button type="button" class="btn btn-default">검색</button>
+				  <button type="button" class="btn btn-default" id="search">검색</button>
 				  
 				  <!-- PageNavigation 선택 페이지 값을 보내는 부분 -->
 				  <input type="hidden" id="currentPage" name="currentPage" value=""/>

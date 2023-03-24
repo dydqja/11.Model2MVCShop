@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService{
 		return userDao.getUser(userId);
 	}
 
-	public Map<String , Object > getUserList(Search search) throws Exception {
-		List<User> list= userDao.getUserList(search);
+	public Map<String , Object > getList(Search search) throws Exception {
+		List<User> list= userDao.getList(search);
 		int totalCount = userDao.getTotalCount(search);
 		
 		Map<String, Object> map = new HashMap<String, Object>();

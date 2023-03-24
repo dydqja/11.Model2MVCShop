@@ -161,7 +161,7 @@ public class UserController {
 		search.setPageSize(pageSize);
 		
 		// Business logic ผ๖วเ
-		Map<String , Object> map=userService.getUserList(search);
+		Map<String , Object> map=userService.getList(search);
 		
 		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
 		System.out.println(resultPage);

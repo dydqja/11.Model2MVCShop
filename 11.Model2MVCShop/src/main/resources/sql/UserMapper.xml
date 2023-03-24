@@ -48,7 +48,7 @@
 	 </update>
 		 
 	<!-- SQL : SELECT LIST -->
-	<select  id="getUserList"  parameterType="search"	resultMap="userSelectMap">
+	<select  id="getList"  parameterType="search"	resultMap="userSelectMap">
 	  	SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
 	  					FROM		(	SELECT user_id , user_name , email
@@ -56,10 +56,10 @@
 											<if test="searchCondition != null">
 												<where>
 													<if test="searchCondition == 0 and searchKeyword !='' ">
-										 				user_id = #{searchKeyword}
+										 				user_id like '%'||#{searchKeyword}||'%'
 													</if>
 													<if test="searchCondition == 1 and searchKeyword !='' ">
-										 				user_name = #{searchKeyword}
+										 				user_name like '%'||#{searchKeyword}||'%'
 													</if>
 												</where>
 											</if>
@@ -86,10 +86,10 @@
 						<if test="searchCondition != null">
 							<where>
 								<if test="searchCondition == 0 and searchKeyword !='' ">
-						 			user_id = #{searchKeyword}
+						 			user_id like '%'||#{searchKeyword}||'%'
 								</if>
 								<if test="searchCondition == 1 and searchKeyword !='' ">
-						 		user_name = #{searchKeyword}
+						 			user_name like '%'||#{searchKeyword}||'%'
 								</if>
 							</where>
 						</if> ) countTable						

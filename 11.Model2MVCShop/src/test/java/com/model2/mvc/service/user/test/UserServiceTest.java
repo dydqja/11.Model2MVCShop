@@ -161,7 +161,7 @@ public class UserServiceTest {
 	 	Search search = new Search();
 	 	search.setCurrentPage(1);
 	 	search.setPageSize(3);
-	 	Map<String,Object> map = userService.getUserList(search);
+	 	Map<String,Object> map = userService.getList(search);
 	 	
 	 	List<Object> list = (List<Object>)map.get("list");
 	 	Assert.assertEquals(3, list.size());
@@ -178,7 +178,7 @@ public class UserServiceTest {
 	 	search.setPageSize(3);
 	 	search.setSearchCondition("0");
 	 	search.setSearchKeyword("");
-	 	map = userService.getUserList(search);
+	 	map = userService.getList(search);
 	 	
 	 	list = (List<Object>)map.get("list");
 	 	Assert.assertEquals(3, list.size());
@@ -198,7 +198,7 @@ public class UserServiceTest {
 	 	search.setPageSize(3);
 	 	search.setSearchCondition("0");
 	 	search.setSearchKeyword("admin");
-	 	Map<String,Object> map = userService.getUserList(search);
+	 	Map<String,Object> map = userService.getList(search);
 	 	
 	 	List<Object> list = (List<Object>)map.get("list");
 	 	Assert.assertEquals(1, list.size());
@@ -213,7 +213,7 @@ public class UserServiceTest {
 	 	
 	 	search.setSearchCondition("0");
 	 	search.setSearchKeyword(""+System.currentTimeMillis());
-	 	map = userService.getUserList(search);
+	 	map = userService.getList(search);
 	 	
 	 	list = (List<Object>)map.get("list");
 	 	Assert.assertEquals(0, list.size());
@@ -233,7 +233,7 @@ public class UserServiceTest {
 	 	search.setPageSize(3);
 	 	search.setSearchCondition("1");
 	 	search.setSearchKeyword("SCOTT");
-	 	Map<String,Object> map = userService.getUserList(search);
+	 	Map<String,Object> map = userService.getList(search);
 	 	
 	 	List<Object> list = (List<Object>)map.get("list");
 	 	Assert.assertEquals(3, list.size());
@@ -248,7 +248,7 @@ public class UserServiceTest {
 	 	
 	 	search.setSearchCondition("1");
 	 	search.setSearchKeyword(""+System.currentTimeMillis());
-	 	map = userService.getUserList(search);
+	 	map = userService.getList(search);
 	 	
 	 	list = (List<Object>)map.get("list");
 	 	Assert.assertEquals(0, list.size());
