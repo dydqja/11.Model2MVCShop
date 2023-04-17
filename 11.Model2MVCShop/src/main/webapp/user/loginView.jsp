@@ -15,8 +15,9 @@
 	<!--  ///////////////////////// Bootstrap, jQuery CDN ////////////////////////// -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+	<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
 	
 	<!--  ///////////////////////// CSS ////////////////////////// -->
 	<style>
@@ -64,6 +65,25 @@
 			});
 		});
 		
+		//============= NaverIdLogin 추가 ==============
+			
+		var naver_id_login = new naver_id_login("pZNrxxYIu2jCIoHWP1k_", "http://localhost:8080/naver_callback.html");
+		var state = naver_id_login.getUniqState();
+		naver_id_login.setButton("green", 1, 40);
+		//naver_id_login.setDomain("http://localhost:8080/user/loginView.jsp") << 도메인이 없으면??
+		naver_id_login.setState(state);
+		naver_id_login.setPopup();
+		naver_id_login.init_naver_id_login();
+		
+		
+			clientId: 'pZNrxxYIu2jCIoHWP1k_' ,
+			callbackUrl = 'http://localhost:8080/naver_callback.html' ,
+			isPopup: false ,
+			loginButton: { color: 'green', type: 3, height: 60 }
+		});
+		
+		naverLogin.init();
+		
 	</script>		
 	
 </head>
@@ -109,12 +129,14 @@
 					      <input type="password" class="form-control" name="password" id="password" placeholder="패스워드" >
 					    </div>
 					  </div>
-					  
+					 					  					  
 					  <div class="form-group">
+					  <div id="naver_id_login"></div> 왜안나오니?
 					    <div class="col-sm-offset-4 col-sm-6 text-center">
 					      <button type="button" class="btn btn-primary"  >로 &nbsp;그 &nbsp;인</button>
 					      <a class="btn btn-primary btn" href="#" role="button">회 &nbsp;원 &nbsp;가 &nbsp;입</a>
 					    </div>
+					    
 					  </div>
 			
 					</form>
