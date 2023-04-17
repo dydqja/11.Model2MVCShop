@@ -23,6 +23,9 @@ public class User {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// JSON ==> Domain Object  Binding을 위해 추가된 부분
 	private String regDateString;
+	/////////////// daum 주소찾기 api 추가부분 ///////////
+	private String addrDetail;
+	
 
 	
 	
@@ -111,7 +114,7 @@ public class User {
 	}
 	public String getPhone3() {
 		return phone3;
-	}
+	}	
 
 	@Override
 	public String toString() {
@@ -142,4 +145,14 @@ public class User {
 	public void setRegDateString(String regDateString) {
 		this.regDateString = regDateString;
 	}
+	///////////////daum 주소찾기 api 추가부분/////////////////////////////////////////////////
+	
+	public String getAddrDetail() {
+		return addrDetail;
+	}
+	
+	public void setAddrDetail(String addrDetail) {
+		this.addrDetail = addrDetail;
+	}
+	
 }

@@ -78,7 +78,14 @@
 		<div class="row">
 	  		<div class="col-xs-4 col-md-2 "><strong>林家</strong></div>
 			<div class="col-xs-8 col-md-4">${user.addr}</div>
-		</div>
+		</div>		
+		
+		<hr/>
+		
+		<div class="row">
+	  		<div class="col-xs-4 col-md-2 "><strong>惑技林家</strong></div>
+			<div class="col-xs-8 col-md-4">${user.addrDetail}</div>
+		</div>		
 		
 		<hr/>
 		

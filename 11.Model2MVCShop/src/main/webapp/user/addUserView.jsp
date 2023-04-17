@@ -280,7 +280,7 @@
 		    <label for="addr" id="postcode" class="col-sm-offset-1 col-sm-3 control-label">林家</label>
 		    <div class="col-sm-4">
 		    <input type="text" class="form-control" id="sample4_roadAddress" name="addr" placeholder="档肺疙林家" >
-		    <input type="text" class="form-control" id="sample4_detailAddress" name="addrDtail" placeholder="惑技林家">
+		    <input type="text" class="form-control" id="sample4_detailAddress" name="addrDetail" placeholder="惑技林家">
 		    </div>		    
 		    <div class="col-sm-2">
 			<input type="button" class="btn btn-info" onclick="sample4_execDaumPostcode()" value="快祈锅龋 茫扁">

@@ -76,13 +76,7 @@
 		naver_id_login.init_naver_id_login();
 		
 		
-			clientId: 'pZNrxxYIu2jCIoHWP1k_' ,
-			callbackUrl = 'http://localhost:8080/naver_callback.html' ,
-			isPopup: false ,
-			loginButton: { color: 'green', type: 3, height: 60 }
-		});
 		
-		naverLogin.init();
 		
 	</script>		
 	

@@ -9,28 +9,29 @@
  	
 	<resultMap id="userSelectMap" type="user">
 		<result property="userId" 			column="user_id" 			jdbcType="VARCHAR"/>
-		<result property="userName"	column="user_name" 		jdbcType="VARCHAR" />
-		<result property="password" 	column="password" 		jdbcType="VARCHAR" />
-		<result property="role" 				column="role" 					jdbcType="VARCHAR" />
-		<result property="ssn" 				column="ssn" 					jdbcType="VARCHAR" />
+		<result property="userName"			column="user_name" 			jdbcType="VARCHAR" />
+		<result property="password" 		column="password" 			jdbcType="VARCHAR" />
+		<result property="role" 			column="role" 				jdbcType="VARCHAR" />
+		<result property="ssn" 				column="ssn" 				jdbcType="VARCHAR" />
 		<result property="phone" 			column="cell_phone" 		jdbcType="VARCHAR" />
-		<result property="addr" 				column="addr" 					jdbcType="VARCHAR" />
+		<result property="addr" 			column="addr" 				jdbcType="VARCHAR" />
 		<result property="email" 			column="email" 				jdbcType="NUMERIC"  />
-		<result property="regDate" 		column="reg_date" 			jdbcType="DATE" />
+		<result property="regDate" 			column="reg_date" 			jdbcType="DATE" />
+		<result property="addrDetail"		column="addr_detail"		jdbcType="VARCHAR" />
 	</resultMap>
 	
 	<!-- SQL : INSERT -->
 	<insert 	id="addUser"		parameterType="user" >
 	 	INSERT
-		INTO users( user_id , user_name , password , role , ssn, cell_phone, addr, email , reg_date) 
+		INTO users( user_id , user_name , password , role , ssn, cell_phone, addr, email , reg_date , addr_detail) 
 		VALUES	 (	#{userId} , #{userName} , #{password} , 'user' , #{ssn:VARCHAR} , 
-							#{phone:VARCHAR} , #{addr:VARCHAR} , #{email:VARCHAR} , SYSDATE )
+							#{phone:VARCHAR} , #{addr:VARCHAR} , #{email:VARCHAR} , SYSDATE , #{addrDetail:VARCHAR} )
 	 </insert>
 	 
 	 <!-- SQL : SELECT ONE -->
 	 <select 	id="getUser"	parameterType="string"	resultMap="userSelectMap">
 		SELECT
-		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date 		
+		user_id , user_name , password , role ,  cell_phone ,  addr , email , reg_date , addr_detail		
 		FROM users 
 		WHERE user_id = #{value}
 	 </select>
@@ -40,9 +41,10 @@
 	   	UPDATE users
 	   	<set>
 	   		user_name 	= #{userName} ,
-			cell_phone	= #{phone},
-			addr 				= #{addr} ,
-			email				=	#{email}
+			cell_phone	= #{phone} ,
+			addr 		= #{addr} ,
+			addr_detail = #{addrDetail} , 
+			email		= #{email}
 	   	</set>
 	   	WHERE user_id = #{userId}
 	 </update>
