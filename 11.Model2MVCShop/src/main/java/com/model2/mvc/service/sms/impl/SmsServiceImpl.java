@@ -95,31 +95,42 @@ public class SmsServiceImpl implements SmsService {
     
     @Override
     public SmsResponseDto sendSms(MessageDto messageDto) throws Exception{
+    	
+    	System.out.println("SmsServiceImpl에서 sendSms 실행됨.===========");
+    	
         String time = Long.toString(System.currentTimeMillis());
+        
+        System.out.println("1. time 값은? ==========" + time );
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("x-ncp-apigw-timestamp", time);
         headers.set("x-ncp-iam-access-key", accessKey);
         headers.set("x-ncp-apigw-signature-v2", getSignature(time)); // signature 서명
+        
+        System.out.println("2. Header 값은? ==========" + headers);
 
         List<MessageDto> messages = new ArrayList<>();
-        messages.add(messageDto);
+        messages.add(messageDto);        
 
         SmsRequestDto request = SmsRequestDto.builder()
                 .type("SMS")
                 .contentType("COMM")
                 .countryCode("82")
                 .from(phone)
-                .content("[서비스명 테스트닷] 인증번호 [" + smsConfirmNum + "]를 입력해주세요")
+                .content("[서비스명 모여행] 인증번호 [" + smsConfirmNum + "]를 입력해주세요")
                 .messages(messages)
-                .build();
-
+                .build();        
+        System.out.println("3. SmsRequestDto request getFrom==========" + request.getFrom());
         //쌓은 바디를 json형태로 반환
         ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("4. ==========" + objectMapper);
         String body = objectMapper.writeValueAsString(request);
+        
         // jsonBody와 헤더 조립
         HttpEntity<String> httpBody = new HttpEntity<>(body, headers);
+        
+        System.out.println("5. body+header 값은? ==========" + httpBody);
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());

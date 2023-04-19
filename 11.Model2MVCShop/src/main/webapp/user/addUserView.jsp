@@ -144,7 +144,7 @@
 		//==>"ID중복확인" Event 처리 및 연결
 		 $(function() {
 			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-			 $("button.btn.btn-info").on("click" , function() {
+			 $("button.btn.btn-info").on("click" , function() {				 
 				popWin 
 				= window.open("/user/checkDuplication.jsp",
 											"popWin", 
@@ -153,7 +153,7 @@
 			});
 		});	
 		
-		//==> "주소찾기" Event 처리 및 연결
+		//==> "우편번호찾기" Event 처리 및 연결
 		
 		function sample4_execDaumPostcode() {
         new daum.Postcode({
@@ -208,7 +208,41 @@
                 }
             }
         }).open();
-    }
+		}
+		
+		//==> "인증번호전송" Event 처리 및 연결
+		
+		$(function() {
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)		
+			$( "#phCode" ).on("click", function() {
+				
+				alert("인증번호전송 클릭됨");
+				
+				var messageDto = "01092971103"
+				
+				$.ajax({			
+										
+					url: "/sms/send",
+		            type: "POST",		            
+		            contentType: "application/json; charset=utf-8",
+		            data: JSON.stringify(messageDto),
+		            dataType: "JSON",
+		            success: function(response) {
+		            	
+		            	alert("성공");
+		            },		            
+		            error: function(error) {
+		                
+		            	alert("실패 = " + JSON.stringify(messageDto));
+		            }
+					
+				});
+				
+							
+				
+			});
+		});
+    
 
 	</script>		
     
@@ -290,7 +324,7 @@
 		  </div>		  
 		  
 		  <div class="form-group">
-		    <label for="ssn" class="col-sm-offset-1 col-sm-3 control-label">휴대전화번호</label>
+		    <label for="ssn" class="col-sm-offset-1 col-sm-3 control-label">휴대전화번호</label>		    
 		     <div class="col-sm-2">
 		      <select class="form-control" name="phone1" id="phone1">
 				  	<option value="010" >010</option>
@@ -299,15 +333,28 @@
 					<option value="018" >018</option>
 					<option value="019" >019</option>
 				</select>
-		    </div>
+				
+		      	<input type="text" class="form-control" id="phCodeConfirm" name="phCodeConfirm" placeholder="인증번호">
+		    	
+				
+		   </div>
 		    <div class="col-sm-2">
 		      <input type="text" class="form-control" id="phone2" name="phone2" placeholder="번호">
+		      
+			<input type="button" class="btn btn-info" id="phCode" value="인증번호 전송">
+			
 		    </div>
 		    <div class="col-sm-2">
 		      <input type="text" class="form-control" id="phone3" name="phone3" placeholder="번호">
-		    </div>
+		    </div>		    
 		    <input type="hidden" name="phone"  />
-		  </div>
+		    
+		    
+		    
+		   </div>
+		   
+					  
+					  
 		  
 		   <div class="form-group">
 		    <label for="ssn" class="col-sm-offset-1 col-sm-3 control-label">이메일</label>

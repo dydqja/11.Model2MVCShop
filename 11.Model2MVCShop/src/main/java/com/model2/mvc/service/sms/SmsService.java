@@ -5,7 +5,7 @@ import com.model2.mvc.service.domain.SmsResponseDto;
 
 
 
-public interface SmsService {
+public interface SmsService {	
 	
 	String getSignature(String time) throws Exception;    
     
