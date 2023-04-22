@@ -1,46 +1,43 @@
 package com.model2.mvc.service.sms.impl;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.model2.mvc.service.domain.MessageDto;
 import com.model2.mvc.service.domain.SmsRequestDto;
 import com.model2.mvc.service.domain.SmsResponseDto;
 import com.model2.mvc.service.sms.SmsService;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+import org.apache.http.impl.client.HttpClients;
+import org.springframework.http.client.ClientHttpRequestFactory;
 
 
-//@PropertySource("classpath:/config/application.properties")
-//@Slf4j
-//@RequiredArgsConstructor
+
 @Service("smsServiceImpl")
 public class SmsServiceImpl implements SmsService {
 	
@@ -65,7 +62,7 @@ public class SmsServiceImpl implements SmsService {
     private String phone;
     
     @Override
-    public String getSignature(String time) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
+    public String getSignature(String time) throws Exception {
         String space = " ";
         String newLine = "\n";
         String method = "POST";
@@ -88,7 +85,8 @@ public class SmsServiceImpl implements SmsService {
         mac.init(signingKey);
 
         byte[] rawHmac = mac.doFinal(message.getBytes("UTF-8"));
-        String encodeBase64String = Base64.encodeBase64String(rawHmac);
+        //String encodeBase64String = Base64.encodeBase64String(rawHmac); ==> org.apache.hc.client5.http.utils.Base64 라이브러리를 이용한방법.
+        String encodeBase64String = new String(Base64.getEncoder().encode(rawHmac)); // ==> java.util.Base64 라이브러리를 이용한방법.
 
         return encodeBase64String;
     }
@@ -113,33 +111,77 @@ public class SmsServiceImpl implements SmsService {
         List<MessageDto> messages = new ArrayList<>();
         messages.add(messageDto);        
 
-        SmsRequestDto request = SmsRequestDto.builder()
+        SmsRequestDto request = new SmsRequestDto.Builder()
                 .type("SMS")
                 .contentType("COMM")
                 .countryCode("82")
                 .from(phone)
                 .content("[서비스명 모여행] 인증번호 [" + smsConfirmNum + "]를 입력해주세요")
                 .messages(messages)
-                .build();        
-        System.out.println("3. SmsRequestDto request getFrom==========" + request.getFrom());
-        //쌓은 바디를 json형태로 반환
+                .build();
+        
+        //쌓은 바디를 json형태로 반환        
         ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("4. ==========" + objectMapper);
+        objectMapper.registerModule(new JavaTimeModule()); // LocalDateTime 객체 역직렬화 실패로 인한 추가사항
         String body = objectMapper.writeValueAsString(request);
         
         // jsonBody와 헤더 조립
-        HttpEntity<String> httpBody = new HttpEntity<>(body, headers);
+        HttpEntity<String> httpBody = new HttpEntity<>(body, headers);        
+        System.out.println("3. body+header 값은? ==========" + httpBody);
         
-        System.out.println("5. body+header 값은? ==========" + httpBody);
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        
+        
+        
+        CloseableHttpClient httpClient = HttpClients.createDefault(); // <= HttpClients를 생성하면서 문제가있는지, 이 메서드 사용하면 creating bean 에러 뜸        
+        //CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+        
+//        RequestConfig requestConfig = RequestConfig.custom()
+//        	    .setConnectTimeout(5000) // 연결 시간 초과를 5초로 설정
+//        	    .setSocketTimeout(5000) // 소켓 시간 초과를 5초로 설정
+//        	    .build();
+//
+//        	CloseableHttpClient httpClient = HttpClients.custom()
+//        	    .setDefaultRequestConfig(requestConfig)
+//        	    .build();
+        
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);        
+        RestTemplate restTemplate = new RestTemplate();        
+        restTemplate.setRequestFactory(factory);        
+        
+//        restTemplate.setRequestFactory 확인용(삭제해도 문제없음)
+        ClientHttpRequestFactory currentFactory = restTemplate.getRequestFactory();        
+        if (currentFactory instanceof HttpComponentsClientHttpRequestFactory) {
+            System.out.println("HttpComponentsClientHttpRequestFactory is configured");
+        } else {
+            System.out.println("HttpComponentsClientHttpRequestFactory is not configured");
+        }        
+        
         //restTemplate로 post 요청 보내고 오류가 없으면 202코드 반환
-        SmsResponseDto smsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+ serviceId +"/messages"), httpBody, SmsResponseDto.class);
+        System.out.println("Before restTemplate.postForObject");
+        //SmsResponseDto smsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+ serviceId +"/messages"), httpBody, SmsResponseDto.class);
+        
+        //HttpEntity<?> httpEntity = new HttpEntity<>(httpBody, headers);
+        String url = "https://sens.apigw.ntruss.com/sms/v2/services/" + serviceId + "/messages";
+        System.out.println("url값 확인용 =====> " + url);
+        //System.out.println("httpEntity: " + httpEntity);
+        
+        ResponseEntity<String> responseEntity = restTemplate.exchange(new URI(url), HttpMethod.POST, httpBody, String.class);
+        System.out.println("responseEntity 확인용 =====> " + responseEntity);
+     // JSON 응답을 문자열로 확인
+        String jsonResponse = responseEntity.getBody();
+        System.out.println("JSON 응답: " + jsonResponse);
+     // 이제 필요한 경우 문자열 형식의 JSON 응답을 SmsResponseDto 객체로 변환할 수 있습니다.
+        SmsResponseDto smsResponseDto = objectMapper.readValue(jsonResponse, SmsResponseDto.class);        
+        System.out.println("4. smsResponseDto 값은? ==========" + smsResponseDto.getSmsConfirmNum());        
+        
         SmsResponseDto responseDto = new SmsResponseDto(smsConfirmNum);
-       // redisUtil.setDataExpire(smsConfirmNum, messageDto.getTo(), 60 * 3L); // 유효시간 3분
+        System.out.println("5. responseDto 값은? ==========" + responseDto);
+       // redisUtil.setDataExpire(smsConfirmNum, messageDto.getTo(), 60 * 3L); // 유효시간 3분        
+        
         return smsResponseDto;
+        
     }
+    
 
     // 인증코드 만들기
     public String createSmsKey() {

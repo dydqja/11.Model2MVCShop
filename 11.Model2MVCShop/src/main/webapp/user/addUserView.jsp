@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=EUC-KR" %>
 <%@ page pageEncoding="EUC-KR"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
 <!DOCTYPE html>
@@ -218,7 +219,9 @@
 				
 				alert("인증번호전송 클릭됨");
 				
-				var messageDto = "01092971103"
+				var messageDto = ($('#phone1').val()+$('#phone2').val()+$('#phone3').val())
+				console.log(messageDto);
+									
 				
 				$.ajax({			
 										
@@ -229,11 +232,13 @@
 		            dataType: "JSON",
 		            success: function(response) {
 		            	
-		            	alert("성공");
+		            	alert("성공"+$("smsConfirmNum").val);
+		            	
 		            },		            
 		            error: function(error) {
 		                
 		            	alert("실패 = " + JSON.stringify(messageDto));
+		            	
 		            }
 					
 				});
@@ -342,7 +347,12 @@
 		      <input type="text" class="form-control" id="phone2" name="phone2" placeholder="번호">
 		      
 			<input type="button" class="btn btn-info" id="phCode" value="인증번호 전송">
-			
+			<c:if test="${ ! empty result }">
+				<c:if test="${ result =='true' }">
+				<input type="button" class="btn btn-info" id="phCodeConfirm" value="인증번호 확인">
+				<input type="button" class="btn btn-info" id="phCode" value="인증번호 재전송">
+				</c:if>
+			</c:if>
 		    </div>
 		    <div class="col-sm-2">
 		      <input type="text" class="form-control" id="phone3" name="phone3" placeholder="번호">
