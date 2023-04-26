@@ -24,7 +24,7 @@
 	<style>
        body > div.container{
         	border: 3px solid #D6CDB7;
-            margin-top: 10px;
+            margin-top: 10px;            
         }
     </style>
     
@@ -55,6 +55,10 @@
 			var pw=$("input[name='password']").val();
 			var pw_confirm=$("input[name='password2']").val();
 			var name=$("input[name='userName']").val();
+			var ph_confirm=$('#phCode').val();
+			
+			console.log( $('#phCode').val());
+			console.log('인증번호 전송');
 			
 			
 			if(id == null || id.length <1){
@@ -88,6 +92,11 @@
 			}
 
 			$("input:hidden[name='phone']").val( value );
+			
+			if( ph_confirm == '인증번호 전송') {
+				alert("휴대전화번호 인증을 완료해주세요.")
+				return;
+			}
 			
 			$("form").attr("method" , "POST").attr("action" , "/user/addUser").submit();
 		}
@@ -215,13 +224,10 @@
 		
 		$(function() {
 			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)		
-			$( "#phCode" ).on("click", function() {
-				
-				alert("인증번호전송 클릭됨");
+			$( "#phCode" ).on("click", function() {				
 				
 				var messageDto = ($('#phone1').val()+$('#phone2').val()+$('#phone3').val())
-				console.log(messageDto);
-									
+				console.log(messageDto);									
 				
 				$.ajax({			
 										
@@ -229,24 +235,62 @@
 		            type: "POST",		            
 		            contentType: "application/json; charset=utf-8",
 		            data: JSON.stringify(messageDto),
-		            dataType: "JSON",
-		            success: function(response) {
+		            dataType: "json",
+		            success: function(response) {		            	
 		            	
-		            	alert("성공"+$("smsConfirmNum").val);
+		            	popWin 
+						= window.open("/sms/phCodeConfirm.jsp",
+													"popWin", 
+													"left=300,top=200,width=780,height=130,marginwidth=0,marginheight=0,"+
+													"scrollbars=no,scrolling=no,menubar=no,resizable=no");
+		            	popWin.phCode = this;
+		            	
+		            	// 팝업 창이 로드 된 후에 전역 변수에 값을 할당.
+		            	popWin.onload = function() {
+		            		popWin.smsConfirmNum = response.smsConfirmNum;
+		            	}
 		            	
 		            },		            
 		            error: function(error) {
 		                
-		            	alert("실패 = " + JSON.stringify(messageDto));
+		            	alert("실패");
 		            	
-		            }
-					
-				});
-				
-							
-				
+		            }					
+				});				
 			});
 		});
+		
+		//==> "인증번호전송" Event 재전송 함수
+		function resendSmsConfirmNum() {
+			
+			var messageDto = ($('#phone1').val()+$('#phone2').val()+$('#phone3').val())
+			console.log(messageDto);			
+								
+			return new Promise(function(resolve) {
+				
+			$.ajax({			
+									
+				url: "/sms/send",
+	            type: "POST",		            
+	            contentType: "application/json; charset=utf-8",
+	            data: JSON.stringify(messageDto),
+	            dataType: "json",
+	            success: function(response) {
+	            	
+	            	var resendData = response.smsConfirmNum;
+	            	
+	            	resolve(resendData);
+	            	
+	            },		            
+	            error: function(error) {
+	                
+	            	alert("실패");
+	            	
+	            }				
+			});	//ajax close		
+			}); //Promise close
+			
+		}
     
 
 	</script>		
@@ -337,29 +381,20 @@
 					<option value="016" >016</option>
 					<option value="018" >018</option>
 					<option value="019" >019</option>
-				</select>
-				
-		      	<input type="text" class="form-control" id="phCodeConfirm" name="phCodeConfirm" placeholder="인증번호">
-		    	
-				
+				</select>				
 		   </div>
+		   
 		    <div class="col-sm-2">
-		      <input type="text" class="form-control" id="phone2" name="phone2" placeholder="번호">
-		      
-			<input type="button" class="btn btn-info" id="phCode" value="인증번호 전송">
-			<c:if test="${ ! empty result }">
-				<c:if test="${ result =='true' }">
-				<input type="button" class="btn btn-info" id="phCodeConfirm" value="인증번호 확인">
-				<input type="button" class="btn btn-info" id="phCode" value="인증번호 재전송">
-				</c:if>
-			</c:if>
+		      <input type="text" class="form-control" id="phone2" name="phone2" placeholder="번호">			
 		    </div>
+		    
 		    <div class="col-sm-2">
 		      <input type="text" class="form-control" id="phone3" name="phone3" placeholder="번호">
 		    </div>		    
 		    <input type="hidden" name="phone"  />
 		    
-		    
+		    <input type="button" class="btn btn-info" id="phCode" value="인증번호 전송">
+			<span id="phCodeText" style="display: none; align-items : center;">인증 완료</span>		    
 		    
 		   </div>
 		   

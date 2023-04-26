@@ -52,6 +52,16 @@ public class SmsResponseDto {
 
 	public String getSmsConfirmNum() {
 		return smsConfirmNum;
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		return "SmsResponseDto : [smsConfirmNum] " +smsConfirmNum+
+							   ",[requestId] " +requestId+
+							   ",[requestTime] " +requestTime+
+							   ",[statusCode] " +statusCode+
+							   ",[statusName] " +statusName;
+			   
+	}
     
 }
