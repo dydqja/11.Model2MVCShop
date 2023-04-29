@@ -67,13 +67,17 @@
 		
 		//============= NaverIdLogin 추가 ==============
 			
-		var naver_id_login = new naver_id_login("pZNrxxYIu2jCIoHWP1k_", "http://localhost:8080/naver_callback.html");
-		var state = naver_id_login.getUniqState();
-		naver_id_login.setButton("green", 1, 40);
-		//naver_id_login.setDomain("http://localhost:8080/user/loginView.jsp") << 도메인이 없으면??
-		naver_id_login.setState(state);
-		naver_id_login.setPopup();
-		naver_id_login.init_naver_id_login();
+		function loginWithNaver() {
+			
+			alert("버튼click");
+			
+    		$.ajax({
+        		url: '/naverLogin/getNaverAuthUrl',
+        		type: 'get',
+    		}).done(function (res) {
+        		location.href = res;
+    		});
+		}
 		
 		
 		
@@ -125,7 +129,7 @@
 					  </div>
 					 					  					  
 					  <div class="form-group">
-					  <div id="naver_id_login"></div> 왜안나오니?
+					  <input type="button" class="btn btn-info" onclick="loginWithNaver()" value="네이버 로그인">
 					    <div class="col-sm-offset-4 col-sm-6 text-center">
 					      <button type="button" class="btn btn-primary"  >로 &nbsp;그 &nbsp;인</button>
 					      <a class="btn btn-primary btn" href="#" role="button">회 &nbsp;원 &nbsp;가 &nbsp;입</a>
