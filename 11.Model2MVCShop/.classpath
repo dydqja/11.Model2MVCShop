@@ -32,5 +32,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/scribejava-apis-8.3.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/scribejava-core-2.8.1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/gson-2.8.9"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jedis-3.7.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/spring-data-redis-2.6.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/json-lib-2.4-jdk15"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
