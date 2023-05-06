@@ -1,4 +1,4 @@
-package com.model2.mvc.service.naverLogin.impl;
+package com.model2.mvc.service.naver.impl;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -16,7 +16,7 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.model2.mvc.service.domain.NaverLogin;
-import com.model2.mvc.service.naverLogin.NaverLoginService;
+import com.model2.mvc.service.naver.NaverLoginService;
 
 @Service("naverLoginServiceImpl")
 public class NaverLoginServiceImpl implements NaverLoginService {
@@ -46,14 +46,9 @@ public class NaverLoginServiceImpl implements NaverLoginService {
     	System.out.println("NaverLoginServiceImpl에서 getAuthorizationUrl 실행됨.");    	
     	
         // 세션 유효성 검증을 위하여 난수를 생성
-        String state = generateRandomString();
-        String sessionId = session.getId();
+        String state = generateRandomString();        
         // 생성한 난수 값을 session에 저장        
-        session.setAttribute("oauth_state", state);
-        
-        System.out.println("난수값(state) == 저장된 세션값(session) 이어야 함.");
-        System.out.println("state ["+state+"]"+"== session ["+session.getAttribute("oauth_state")+"]");        
-       
+        session.setAttribute("oauth_state", state);       
         // Scribe에서 제공하는 인증 URL 생성 기능을 이용하여 네아로 인증 URL 생성
         OAuth20Service oauthService = new ServiceBuilder()
         		.apiKey(CLIENT_ID)
@@ -69,11 +64,9 @@ public class NaverLoginServiceImpl implements NaverLoginService {
     public OAuth2AccessToken getAccessToken(HttpSession session, String code, String state) throws IOException {
     	
     	System.out.println("NaverLoginServiceImpl 에서 getAccessToken 실행됨.");    	
-    	System.out.println("'state' 값 ["+state+"] 과 'oauth_state' 값 ["+session.getAttribute("oauth_state")+"] 이 일치해야함");
-    	
-        // Callback으로 전달받은 세선검증용 난수값과 세션에 저장되어있는 값이 일치하는지 확인
+        // Callback으로 전달받은 세션검증용 난수값과 세션에 저장되어있는 값이 일치하는지 확인
         String sessionState = (String) session.getAttribute("oauth_state");        
-        
+        //sessionState와 state 비교 ==> CSRF공격 방지
         if (StringUtils.pathEquals(sessionState, state)) {
 
             OAuth20Service oauthService = new ServiceBuilder()
@@ -109,6 +102,7 @@ public class NaverLoginServiceImpl implements NaverLoginService {
 
         OAuthRequest request = new OAuthRequest(Verb.GET, PROFILE_API_URL, oauthService);
         oauthService.signRequest(oauthToken, request);
+        //사용자정보를 JSON문자열로 받음.
         Response response = request.send();
         return response.getBody();
     }

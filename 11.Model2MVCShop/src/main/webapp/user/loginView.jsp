@@ -72,9 +72,10 @@
 			alert("¹öÆ°click");
 			
     		$.ajax({
-        		url: '/naverLogin/getNaverAuthUrl',
+        		url: '/naver/getNaverAuthUrl',
         		type: 'get',
     		}).done(function (res) {
+    			alert(res);
         		location.href = res;
     		});
 		}

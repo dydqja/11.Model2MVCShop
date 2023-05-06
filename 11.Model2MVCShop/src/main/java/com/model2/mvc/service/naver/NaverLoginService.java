@@ -1,4 +1,4 @@
-package com.model2.mvc.service.naverLogin;
+package com.model2.mvc.service.naver;
 
 import javax.servlet.http.HttpSession;
 

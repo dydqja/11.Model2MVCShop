@@ -105,7 +105,9 @@ public class SmsServiceImpl implements SmsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("x-ncp-apigw-timestamp", time);
         headers.set("x-ncp-iam-access-key", accessKey);
-        headers.set("x-ncp-apigw-signature-v2", getSignature(time)); // signature 서명        
+        headers.set("x-ncp-apigw-signature-v2", getSignature(time)); // signature 서명
+        
+        System.out.println("1========"+headers);
 
         List<MessageDto> messages = new ArrayList<>();
         messages.add(messageDto);
@@ -122,9 +124,11 @@ public class SmsServiceImpl implements SmsService {
                 .messages(messages)
                 .build();
         
+        System.out.println("2========"+request);
+        
         //쌓은 바디를 json형태로 반환        
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // LocalDateTime 객체 역직렬화 실패로 인한 추가사항
+        objectMapper.registerModule(new JavaTimeModule()); // LocalDateTime 객체 역'직렬화 실패로 인한 추가사항
         String body = objectMapper.writeValueAsString(request);
         
         // jsonBody와 헤더 조립
